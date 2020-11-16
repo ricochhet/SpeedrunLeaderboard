@@ -1,0 +1,13 @@
+{
+	"USERNAME": {
+		"name": "USERNAME",
+		"runs": [
+			{
+				"quest_name": "Quest Name",
+				"time": "00'00\"00",
+				"weapon": "Weapon Type",
+				"link": "Speedrun Link"
+			}
+		]
+	}
+}
