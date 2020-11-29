@@ -9,18 +9,24 @@ Once NodeJS is installed, install the NPM dependencies.
 - `cd <root directory>`
 - `npm i --save`
 
+Rename the `.env.example` to `.env` and configure it accordingly.
+
+```
+API_PORT=MY-API-PORT
+```
+
 ### Running the API:
 Running the API is quite simple.
 
 - `cd <root directory>`
 - `node .` or `node main`
 
-### Running the Examples:
-Running the examples is easy as well. 
+### Running the Tests:
+Running the tests is easy as well. 
 
-- `cd <root/examples/>`
-- `node database.example.js`
+- `cd <root/tests/>`
+- `node database.test.js`
 
 or
 
-- `node examples/database.example.js`
+- `node examples/database.test.js`

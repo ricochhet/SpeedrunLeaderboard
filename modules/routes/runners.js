@@ -1,5 +1,12 @@
+const Database = require("../database");
 const router = require("express").Router();
 const fs = require("fs");
+
+const database_Options = {
+	encoding: "utf-8",
+	delimiter: ".",
+	spacing: "\t",
+};
 
 router.use(function timeLog(req, res, next) {
 	console.log("Time: ", Date.now());
@@ -7,9 +14,24 @@ router.use(function timeLog(req, res, next) {
 });
 
 router.get("/runners", function (req, res) {
+	const database = new Database("./database/runners.json", database_Options);
+
 	try {
-		res.json(JSON.parse(fs.readFileSync("./database/runners.json", "utf-8")));
+		res.json(database.json);
 	} catch (e) {
+		res.json({ message: "Could not parse database" });
+	}
+});
+
+router.get("/runners/:user", function (req, res) {
+	const database = new Database("./database/runners.json", database_Options);
+
+	try {
+		if (database.get(req.params.user) == null)
+			return res.json({ message: "User not found" });
+		res.json(database.get(req.params.user));
+	} catch (e) {
+		console.log(e);
 		res.json({ message: "Could not parse database" });
 	}
 });
