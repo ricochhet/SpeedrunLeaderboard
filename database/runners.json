@@ -3,10 +3,16 @@
 		"name": "USERNAME",
 		"runs": [
 			{
-				"quest_name": "Quest Name",
+				"quest_name": "Quest Name 1",
 				"time": "00'00\"00",
-				"weapon": "Weapon Type",
-				"link": "Speedrun Link"
+				"weapon": "Weapon",
+				"link": "Video Link"
+			},
+			{
+				"quest_name": "Quest Name 3",
+				"time": "00'00\"00",
+				"weapon": "Weapon",
+				"link": "Video Link"
 			}
 		]
 	}
