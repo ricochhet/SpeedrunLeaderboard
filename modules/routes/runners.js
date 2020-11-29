@@ -8,11 +8,6 @@ const database_Options = {
 	spacing: "\t",
 };
 
-router.use(function timeLog(req, res, next) {
-	console.log("Time: ", Date.now());
-	next();
-});
-
 router.get("/runners", function (req, res) {
 	const database = new Database("./database/runners.json", database_Options);
 
