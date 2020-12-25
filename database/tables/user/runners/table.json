@@ -1,0 +1,28 @@
+{
+	"runner_1": {
+		"name": "Runner_1",
+		"runs": [
+			{
+				"quest_name": "Quest Name 1",
+				"time": "00'00\"00",
+				"weapon": "Weapon",
+				"link": "Video Link",
+				"platform": "Platform",
+				"ruleset": "TA / Freestyle"
+			}
+		]
+	},
+	"runner_2": {
+		"name": "Runner_2",
+		"runs": [
+			{
+				"quest_name": "Quest Name 2",
+				"time": "00'00\"00",
+				"weapon": "Weapon",
+				"link": "Video Link",
+				"platform": "Platform",
+				"ruleset": "TA / Freestyle"
+			}
+		]
+	}
+}

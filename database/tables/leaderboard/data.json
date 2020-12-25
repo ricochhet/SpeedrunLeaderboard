@@ -1,0 +1,73 @@
+{
+  "rise": {
+    "name": "Monster Hunter Rise",
+    "weapons": [
+      {
+        "name": "Hunting Horn"
+      },
+      {
+        "name": "Hammer"
+      },
+      {
+        "name": "Lance"
+      },
+      {
+        "name": "Gunlance"
+      },
+      {
+        "name": "Bow"
+      },
+      {
+        "name": "Heavy Bowgun"
+      },
+      {
+        "name": "Light Bowgun"
+      },
+      {
+        "name": "Charge Blade"
+      },
+      {
+        "name": "Switch Axe"
+      },
+      {
+        "name": "Insect Glaive"
+      },
+      {
+        "name": "Dual Blades"
+      },
+      {
+        "name": "Longsword"
+      },
+      {
+        "name": "Greatsword"
+      },
+      {
+        "name": "Sword and Shield"
+      }
+    ],
+    "rulesets": [
+      {
+        "name": "TA Wiki"
+      },
+      {
+        "name": "Freestyle"
+      }
+    ],
+    "quests": [
+      {
+        "name": "The Greatest Jagras"
+      },
+      {
+        "name": "Muscle Monkey Madness"
+      }
+    ],
+    "platforms": [
+      {
+        "name": "Switch"
+      },
+      {
+        "name": "PC"
+      }
+    ]
+  }
+}
