@@ -5,7 +5,7 @@
 </template>
 
 <script>
-const API_URL = "http://localhost:9000/api/a/runners";
+const API_URL = "http://localhost:9000/api/leaderboard/runners/all";
 
 export default {
   name: "Home",

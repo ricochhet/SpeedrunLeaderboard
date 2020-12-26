@@ -40,7 +40,7 @@ export default {
   }),
   mounted() {
     // API_URL is placed here because it needs to reference the params
-    const API_URL = "http://localhost:9000/api/runners/" + this.$route.params.id;
+    const API_URL = "http://localhost:9000/api/leaderboard/runners/" + this.$route.params.id;
 
     fetch(API_URL)
       .then(response => response.json())

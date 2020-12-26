@@ -1,6 +1,7 @@
-const Database = require("../database");
+const Database = require("../../database/database");
 const User = require("../models/user");
-const parser = require("../utils/parser");
+const parser = require("../../database/utils/parser");
+const array = require("../../utils/array");
 const router = require("express").Router();
 const fs = require("fs");
 
@@ -16,9 +17,9 @@ const dbOptions = {
 	spacing: "\t",
 };
 
-router.get("/submissions", function (req, res) {
+router.get("/runners", function (req, res) {
 	const database = new Database(
-		"./database/tables/user/submissions/table.json",
+		"./database/tables/leaderboard/user/runners/table.json",
 		opts
 	);
 
@@ -29,9 +30,9 @@ router.get("/submissions", function (req, res) {
 	}
 });
 
-router.get("/a/submissions", function (req, res) {
+router.get("/runners/all", function (req, res) {
 	const database = new Database(
-		"./database/tables/user/submissions/table.json",
+		"./database/tables/leaderboard/user/runners/table.json",
 		opts
 	);
 
@@ -42,9 +43,9 @@ router.get("/a/submissions", function (req, res) {
 	}
 });
 
-router.get("/submissions/:user", function (req, res) {
+router.get("/runners/:user", function (req, res) {
 	const database = new Database(
-		"./database/tables/user/submissions/table.json",
+		"./database/tables/leaderboard/user/runners/table.json",
 		opts
 	);
 
@@ -58,36 +59,39 @@ router.get("/submissions/:user", function (req, res) {
 	}
 });
 
-router.post("/submissions", function (req, res) {
-	const userData = new Map();
+router.post("/runners", function (req, res) {
 	const data = req.body;
 
 	const db = new Database(
-		"./database/tables/user/submissions/table.json",
+		"./database/tables/leaderboard/user/runners/table.json",
 		dbOptions
 	);
 
-	for (const i in data) {
-		userData.set(data[i].name, data[i].value);
-	}
-
 	const user = new User(db, {
-		username: userData.get("runner"),
+		username: data.name,
 		category: `runs`,
 	});
 
-	if (db.get(userData.get("runner").toLowerCase()) == null) {
+	if (db.get(data.name.toLowerCase()) == null) {
 		user.write();
 	}
 
 	user.push({
-		quest_name: userData.get("quest"),
-		time: userData.get("time"),
-		weapon: userData.get("weapon"),
-		link: userData.get("link"),
-		platform: userData.get("platform"),
-		ruleset: userData.get("ruleset")
+		id: data.run.id,
+		quest_name: data.run.quest_name,
+		time: data.run.time,
+		weapon: data.run.weapon,
+		link: data.run.link,
+		platform: data.run.platform,
+		ruleset: data.run.ruleset,
 	});
+
+	const removedDuplicates = array.removeObjectDuplicates(
+		db.json[data.name.toLowerCase().toString().toLowerCase()]["runs"]
+	);
+	db.json[data.name.toLowerCase().toString().toLowerCase()][
+		"runs"
+	] = removedDuplicates;
 
 	db.save();
 

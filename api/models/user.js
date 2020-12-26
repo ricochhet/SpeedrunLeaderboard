@@ -3,6 +3,7 @@ class User {
 		this.database = database;
 		this.options = options;
 		this.submission = {
+			id: null,
 			quest_name: `Quest Name`,
 			time: `00'00"00`,
 			weapon: `Weapon`,
@@ -21,6 +22,7 @@ class User {
 
 	push(data = this.submission) {
 		this.database.get(this.options.username.toLowerCase())[this.options.category].push({
+			id: data.id,
 			quest_name: data.quest_name,
 			time: data.time,
 			weapon: data.weapon,

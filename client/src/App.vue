@@ -18,6 +18,23 @@
         <a class="navbar-item" href="/about">About</a>
         <a class="navbar-item" href="/runners">Runners</a>
         <a class="navbar-item" href="/submissions">Submit</a>
+        <!--<a class="navbar-item" href="/login">Login</a>-->
+      </div>
+    </div>
+
+    <div class="navbar-end">
+      <div class="navbar-item">
+        <div class="buttons">
+          <a class="button is-primary" href="/login">
+            Log in
+          </a>
+          <!--<a class="button is-info" href="/dashboard">
+            Dashboard
+          </a>
+          <a class="button is-warning" href="/logout">
+            Log out
+          </a>-->
+        </div>
       </div>
     </div>
   </nav>

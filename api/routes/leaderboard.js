@@ -1,5 +1,5 @@
-const Database = require("../database");
-const parser = require("../utils/parser");
+const Database = require("../../database/database");
+const parser = require("../../database/utils/parser");
 const router = require("express").Router();
 const fs = require("fs");
 

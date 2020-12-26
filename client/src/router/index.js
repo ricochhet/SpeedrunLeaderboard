@@ -15,16 +15,35 @@ const routes = [
 	{
 		path: "/runners",
 		name: "Users",
-		component: () => import("../views/Users.vue")
+		component: () => import("../views/Users.vue"),
 	},
 	{
 		path: "/submissions",
 		name: "Submissions",
-		component: () => import("../views/Submissions.vue")
+		component: () => import("../views/Submissions.vue"),
+	},
+	{
+		path: "/login",
+		name: "Login",
+		component: () => import("../views/Login.vue"),
+	},
+	{
+		path: "/dashboard",
+		name: "Dashboard",
+		component: () => import("../views/Dashboard.vue"),
 	},
 	{
 		path: "/runners/:id",
-		component: () => import("../views/User.vue")
+		component: () => import("../views/User.vue"),
+	},
+	{
+		path: "/404",
+		name: "NotFound",
+		component: () => import("../views/NotFound.vue"),
+	},
+	{
+		path: '/:pathMatch(.*)',
+		redirect: { name: 'NotFound' }
 	}
 ];
 

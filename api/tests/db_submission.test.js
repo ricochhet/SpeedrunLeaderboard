@@ -1,4 +1,4 @@
-const Database = require("../database");
+const Database = require("../../database/database");
 const User = require("../models/user");
 
 const dbOptions = {
@@ -8,19 +8,19 @@ const dbOptions = {
 };
 
 const db = new Database(
-	"./database/tables/user/runners/table.json",
+	"./database/tables/user/submissions/table.json",
 	dbOptions
 );
 
 db.deleteAll();
 
 const runner_1 = new User(db, {
-	username: `Runner_1`,
+	username: `Submission_1`,
 	category: `runs`,
 });
 
 const runner_2 = new User(db, {
-	username: `Runner_2`,
+	username: `Submission_2`,
 	category: `runs`,
 });
 

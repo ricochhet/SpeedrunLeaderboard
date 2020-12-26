@@ -29,7 +29,7 @@
         <label class="label" for="platform">Platform</label>
         <div class="control">
           <div class="select">
-            <select name="platform">
+            <select name="platform" id="platform-select-field">
               <option v-for="platform in leaderboard.rise_platforms" :key="platform.name">{{ platform.name }}</option>
             </select>
           </div>
@@ -40,7 +40,7 @@
         <label class="label" for="ruleset">Ruleset</label>
         <div class="control">
           <div class="select">
-            <select name="ruleset">
+            <select name="ruleset" id="ruleset-select-field">
               <option v-for="ruleset in leaderboard.rise_rulesets" :key="ruleset.name">{{ ruleset.name }}</option>
             </select>
           </div>
@@ -51,7 +51,7 @@
         <label class="label" for="weapon">Weapon</label>
         <div class="control">
           <div class="select">
-            <select name="weapon">
+            <select name="weapon" id="weapon-select-field">
               <option v-for="weapon in leaderboard.rise_weapons" :key="weapon.name">{{ weapon.name }}</option>
             </select>
           </div>
@@ -62,7 +62,7 @@
         <label class="label" for="quest">Quest</label>
         <div class="control">
           <div class="select">
-            <select name="quest">
+            <select name="quest" id="quest-select-field">
               <option v-for="quest in leaderboard.rise_quests" :key="quest.name">{{ quest.name }}</option>
             </select>
           </div>
@@ -78,8 +78,10 @@
   </form>
 </template>
 <script>
-const API_URL = "http://localhost:9000/api/leaderboard";
+const API_URL = "http://localhost:9000/api/leaderboard/leaderboard";
 import $ from "jquery";
+import axios from "axios";
+import crypto from "crypto";
 
 export default {
   name: "Submissions",
@@ -93,16 +95,23 @@ export default {
     }
   }),
   methods: {
-    process() {
-
+    generateAuthToken: function(byteCount) {
+      return crypto.randomBytes(byteCount).toString("hex");
     }
   },
   mounted() {
+    const self = this;
+    
     $("#submissionForm").on("submit", function(_event) {
       _event.preventDefault();
       let _runner = document.forms["submissionForm"]["runner"].value;
       let _time = document.forms["submissionForm"]["time"].value;
       let _link = document.forms["submissionForm"]["link"].value;
+      
+      let _platform = document.forms["submissionForm"]["platform"].value;
+      let _ruleset = document.forms["submissionForm"]["ruleset"].value;
+      let _weapon = document.forms["submissionForm"]["weapon"].value;
+      let _quest = document.forms["submissionForm"]["quest"].value;
 
       const parse = parser();
       function parser() {
@@ -118,13 +127,32 @@ export default {
       }
 
       if (parse.status == 1) {
-        console.log('test')
-        $.ajax({
+        const data = [
+          { "name": "id", "value": `${_runner}:${self.generateAuthToken(16)}` },
+          { "name": "runner", "value": _runner },
+          { "name": "time", "value": _time },
+          { "name": "link", "value": _link },
+          { "name": "platform", "value": _platform },
+          { "name": "ruleset", "value": _ruleset },
+          { "name": "weapon", "value": _weapon },
+          { "name": "quest", "value": _quest }
+        ]
+
+        axios.post("http://localhost:9000/api/leaderboard/submissions", data).then((response) => {
+          console.log(response);
+          $("#submissionForm").each(function () {
+            this.reset();
+          });
+        }).catch((errors) => {
+          console.log(errors);
+          console.log("Error");
+        });
+
+        /*$.ajax({
           type: "POST",
-          url: "http://localhost:9000/api/submissions",
-          data: JSON.stringify($("#submissionForm").serializeArray()),
+          url: "http://localhost:9000/api/leaderboard/submissions",
+          data: JSON.stringify(data),
           success: function(response) {
-            console.log('test');
             console.log(response);
             $("#submissionForm").each(function () {
               this.reset();
@@ -132,7 +160,7 @@ export default {
           },
           dataType: "text",
           contentType : "application/json"
-        }); 
+        }); */
       }
     });
 
