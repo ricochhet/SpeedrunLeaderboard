@@ -2,7 +2,7 @@
   <div class="content">
     <ul class="is-lower-alpha">
       <li v-for="user in users" :key="user.name">
-        <a :href="'/runners/' + user.name.toLowerCase()">{{user.name}}</a>
+        <a :href="'/runners/' + user.url">{{user.name}}</a>
       </li>
     </ul>
   </div>
@@ -15,11 +15,34 @@ export default {
     error: "",
     users: []
   }),
+  methods: {
+    toURL: function (str) {
+      return str
+        .toLowerCase()
+        .split(" ")
+        .join("-")
+        .split("'")
+        .join("")
+        .split('"')
+        .join("")
+        .split("(")
+        .join("")
+        .split(")")
+        .join("");
+    }
+  },
   mounted() {
     fetch(API_URL)
       .then(response => response.json())
       .then(result => {
-        this.users = result;
+        const users = [];
+
+        for (const i in result) {
+          result[i]["url"] = this.toURL(result[i]["name"].toLowerCase());
+          users.push(result[i])
+        }
+
+        this.users = users;
     });
   }
 };

@@ -97,6 +97,20 @@ export default {
   methods: {
     generateAuthToken: function(byteCount) {
       return crypto.randomBytes(byteCount).toString("hex");
+    },
+    toURL: function (str) {
+      return str
+        .toLowerCase()
+        .split(" ")
+        .join("-")
+        .split("'")
+        .join("")
+        .split('"')
+        .join("")
+        .split("(")
+        .join("")
+        .split(")")
+        .join("");
     }
   },
   mounted() {
@@ -127,7 +141,7 @@ export default {
       }
 
       if (parse.status == 1) {
-        const data = [
+        /*const data = [
           { "name": "id", "value": `${_runner}:${self.generateAuthToken(16)}` },
           { "name": "runner", "value": _runner },
           { "name": "time", "value": _time },
@@ -136,7 +150,18 @@ export default {
           { "name": "ruleset", "value": _ruleset },
           { "name": "weapon", "value": _weapon },
           { "name": "quest", "value": _quest }
-        ]
+        ]*/
+
+        const data = {
+          name: _runner,
+          id: self.generateAuthToken(16),
+          time: _time,
+          link: _link,
+          platform: _platform,
+          ruleset: _ruleset,
+          weapon: _weapon,
+          quest: _quest
+        };
 
         axios.post("http://localhost:9000/api/leaderboard/submissions", data).then((response) => {
           console.log(response);

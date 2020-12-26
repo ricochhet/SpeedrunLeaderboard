@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "../views/Home.vue";
+// import Home from "../views/Home.vue";
 
 const routes = [
 	{
 		path: "/",
 		name: "Home",
-		component: Home,
+		component: () => import("../views/Quests.vue"),
 	},
 	{
 		path: "/about",
@@ -18,7 +18,7 @@ const routes = [
 		component: () => import("../views/Quests.vue"),
 	},
 	{
-		path: "/quests/:id",
+		path: "/quests/:name/:weapon/:ruleset/:platform",
 		component: () => import("../views/Quest.vue"),
 	},
 	{
@@ -34,6 +34,11 @@ const routes = [
 		path: "/submissions",
 		name: "Submissions",
 		component: () => import("../views/Submissions.vue"),
+	},
+	{
+		path: "/queue",
+		name: "Queue",
+		component: () => import("../views/Queue.vue")
 	},
 	{
 		path: "/login",

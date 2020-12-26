@@ -18,12 +18,12 @@
         </header>
         <div class="card-content">
           <div class="content">
-            <strong>Quest: </strong> {{submission.run.quest_name}} <br>
+            <strong>Name: </strong> {{submission.name}} <br>
             <strong>Weapon: </strong> {{submission.run.weapon}} <br>
             <strong>Time: </strong> {{submission.run.time}} <br>
             <strong>Platform: </strong> {{submission.run.platform}} <br>
             <strong>Ruleset: </strong> {{submission.run.ruleset}} <br>
-            <strong>Quest: </strong> {{submission.run.quest_name}} <br>
+            <strong>Quest: </strong> {{submission.run.quest}} <br>
             <strong>Link: </strong> <a :href=submission.run.link>{{submission.run.link}}</a>
             <!--<a href="#">@bulmaio</a>. <a href="#">#css</a> <a href="#">#responsive</a>
             <br>
@@ -31,8 +31,8 @@
           </div>
         </div>
         <footer class="card-footer">
-          <a class="card-footer-item" @click="approveSubmission(submission, submission.run.id)" id="approve-button">Approve</a>
-          <a class="card-footer-item" @click="deleteSubmission(submission.run.id)" id="delete-button">Delete</a>
+          <a class="card-footer-item" @click="approveSubmission(submission, submission.run.id, submission.run.name)" id="approve-button">Approve</a>
+          <a class="card-footer-item" @click="deleteSubmission(submission.run.id, submission.run.name)" id="delete-button">Delete</a>
         </footer>
       </div>
     </div>
@@ -61,7 +61,7 @@ export default {
         router.push("/");
       });
     },
-    approveSubmission: function(data, id) {
+    approveSubmission: function(data, id, name) {
       $(document).on("click", "#approve-button", function() {
         // Move up DOM tree until first incidence of .item-wrapper and remove
         $(this).closest("#submission").remove();
@@ -81,7 +81,7 @@ export default {
       $.ajax({
         type: "DELETE",
         url: "http://localhost:9000/api/leaderboard/submissions",
-        data: JSON.stringify({ id: id }),
+        data: JSON.stringify({ id: id, name: name }),
         success: function(response) {
           console.log(response);
         },
@@ -89,7 +89,7 @@ export default {
         contentType : "application/json"
       });
     },
-    deleteSubmission: function(id) {
+    deleteSubmission: function(id, name) {
       $(document).on("click", "#delete-button", function() {
         // Move up DOM tree until first incidence of .item-wrapper and remove
         $(this).closest("#submission").remove();
@@ -98,7 +98,7 @@ export default {
       $.ajax({
         type: "DELETE",
         url: "http://localhost:9000/api/leaderboard/submissions",
-        data: JSON.stringify({ id: id }),
+        data: JSON.stringify({ id: id, name: name }),
         success: function(response) {
           console.log(response);
         },

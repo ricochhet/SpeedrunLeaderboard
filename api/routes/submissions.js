@@ -1,8 +1,9 @@
 const Database = require("../../database/database");
 const User = require("../models/user");
 const parser = require("../../database/utils/parser");
-const array = require("../../utils/array");
+const arrayUtils = require("../../utils/arrayUtils");
 const router = require("express").Router();
+const winston = require("../../utils/winstonLogger");
 
 const opts = {
 	encoding: "utf-8",
@@ -17,59 +18,66 @@ const dbOptions = {
 };
 
 router.get("/submissions", function (req, res) {
-	const database = new Database(
-		"./database/tables/leaderboard/user/submissions/table.json",
-		opts
-	);
-
 	try {
+		const database = new Database(
+			"./database/tables/leaderboard/user/submissions/table.json",
+			opts
+		);
 		res.json(database.json);
 	} catch (e) {
 		res.json({ message: "Could not parse database" });
+		winston.log({
+			level: "error",
+			message: e,
+		});
 	}
 });
 
 router.get("/submissions/all", function (req, res) {
-	const database = new Database(
-		"./database/tables/leaderboard/user/submissions/table.json",
-		opts
-	);
-
 	try {
+		const database = new Database(
+			"./database/tables/leaderboard/user/submissions/table.json",
+			opts
+		);
 		res.json(parser.toArray(database.json));
 	} catch (e) {
 		res.json({ message: "Could not parse database" });
+		winston.log({
+			level: "error",
+			message: e,
+		});
 	}
 });
 
 router.get("/submissions/:user", function (req, res) {
-	const database = new Database(
-		"./database/tables/leaderboard/user/submissions/table.json",
-		opts
-	);
-
 	try {
+		const database = new Database(
+			"./database/tables/leaderboard/user/submissions/table.json",
+			opts
+		);
 		if (database.get(req.params.user) == null)
 			return res.json({ message: "User not found", status: 404 });
 		res.json(database.get(req.params.user));
 	} catch (e) {
-		console.log(e);
 		res.json({ message: "Could not parse database" });
+		winston.log({
+			level: "error",
+			message: e,
+		});
 	}
 });
 
 router.delete("/submissions", function (req, res) {
-	const data = req.body;
-	const runner = data.id.split(":")[0];
-	const id = data.id;
-
 	try {
+		const data = req.body;
+		const runner = data.name;
+		const id = data.id;
 		const db = new Database(
 			"./database/tables/leaderboard/user/submissions/table.json",
 			dbOptions
 		);
 
-		const user = db.get(runner.toString().toLowerCase());
+		const user = db.get(parser.toURL(runner.toString().toLowerCase()));
 		const runsMap = new Map();
 
 		if (user == null || user == "") return;
@@ -85,56 +93,57 @@ router.delete("/submissions", function (req, res) {
 			items.push(item);
 		});
 
-		db.json[runner.toString().toLowerCase()]["runs"] = items;
+		db.json[parser.toURL(runner.toString().toLowerCase())]["runs"] = items;
+		console.log
 		db.save();
 	} catch (e) {
-		console.log(e);
+		res.json({ message: "Could not parse database" });
+		winston.log({
+			level: "error",
+			message: e,
+		});
 	}
 });
 
 router.post("/submissions", function (req, res) {
-	const userData = new Map();
-	const data = req.body;
+	try {
+		const data = req.body;
 
-	const db = new Database(
-		"./database/tables/leaderboard/user/submissions/table.json",
-		dbOptions
-	);
+		const db = new Database(
+			"./database/tables/leaderboard/user/submissions/table.json",
+			dbOptions
+		);
 
-	for (const i in data) {
-		userData.set(data[i].name, data[i].value);
+		const user = new User(db, {
+			username: data["name"],
+			category: `runs`,
+		});
+
+		if (db.get(parser.toURL(data["name"].toLowerCase())) == null) {
+			user.write();
+		}
+
+		user.push({
+			name: data["name"],
+			id: data["id"],
+			quest: data["quest"],
+			time: data["time"],
+			weapon: data["weapon"],
+			link: data["link"],
+			platform: data["platform"],
+			ruleset: data["ruleset"],
+		});
+
+		db.save();
+
+		res.sendStatus(201);
+	} catch (e) {
+		res.json({ message: "Could not parse database" });
+		winston.log({
+			level: "error",
+			message: e,
+		});
 	}
-
-	const user = new User(db, {
-		username: userData.get("runner"),
-		category: `runs`,
-	});
-
-	if (db.get(userData.get("runner").toLowerCase()) == null) {
-		user.write();
-	}
-
-	user.push({
-		id: userData.get("id"),
-		quest_name: userData.get("quest"),
-		time: userData.get("time"),
-		weapon: userData.get("weapon"),
-		link: userData.get("link"),
-		platform: userData.get("platform"),
-		ruleset: userData.get("ruleset"),
-	});
-
-	// This code block is supposed to remove duplicate submissions, but it's not working at the moment, but it's here for reference :)
-	/*const removedDuplicates = array.removeObjectDuplicates(
-		db.json[userData.get("runner").toString().toLowerCase()]["runs"]
-	);
-	db.json[userData.get("runner").toString().toLowerCase()][
-		"runs"
-	] = removedDuplicates;*/
-
-	db.save();
-
-	res.sendStatus(201);
 });
 
 module.exports = router;

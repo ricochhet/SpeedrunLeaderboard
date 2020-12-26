@@ -19,12 +19,12 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="run in user.runs" :key="run.quest_name">
+          <tr v-for="run in user.runs" :key="run.quest">
             <td>{{ user.name }}</td>
             <td>{{ run.time }}</td>
             <td>{{ run.weapon }}</td>
             <td>{{ run.platform }}</td>
-            <td>{{ run.quest_name }}</td>
+            <td>{{ run.quest }}</td>
             <td>{{ run.ruleset }}</td>
           </tr>
         </tbody>
