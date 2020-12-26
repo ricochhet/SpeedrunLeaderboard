@@ -13,9 +13,22 @@ const routes = [
 		component: () => import("../views/About.vue"),
 	},
 	{
+		path: "/quests",
+		name: "Quests",
+		component: () => import("../views/Quests.vue"),
+	},
+	{
+		path: "/quests/:id",
+		component: () => import("../views/Quest.vue"),
+	},
+	{
 		path: "/runners",
 		name: "Users",
 		component: () => import("../views/Users.vue"),
+	},
+	{
+		path: "/runners/:id",
+		component: () => import("../views/User.vue"),
 	},
 	{
 		path: "/submissions",
@@ -31,10 +44,6 @@ const routes = [
 		path: "/dashboard",
 		name: "Dashboard",
 		component: () => import("../views/Dashboard.vue"),
-	},
-	{
-		path: "/runners/:id",
-		component: () => import("../views/User.vue"),
 	},
 	{
 		path: "/404",

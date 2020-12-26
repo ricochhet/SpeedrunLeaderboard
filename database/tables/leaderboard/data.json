@@ -55,13 +55,20 @@
     ],
     "quests": [
       {
-        "name": "The Greatest Jagras"
+        "name": "The Greatest Jagras",
+        "primary_monster": "Great Jagras",
+        "rank": "1"
       },
       {
-        "name": "Muscle Monkey Madness"
+        "name": "Muscle Monkey Madness",
+        "primary_monster": "Rajang",
+        "rank": "2"
       }
     ],
     "platforms": [
+      {
+        "name": "Switch (DEMO)"
+      },
       {
         "name": "Switch"
       },

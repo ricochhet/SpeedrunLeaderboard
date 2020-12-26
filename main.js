@@ -21,8 +21,9 @@ const app = express();
 // Routers
 const runners = require("./api/routes/runners");
 const submissions = require("./api/routes/submissions");
+
 const leaderboardData = require("./api/routes/leaderboard");
-const { static } = require("express");
+const questData = require('./api/routes/quests');
 // const loginData = require("./api/routes/login");
 
 const dbOptions = {
@@ -70,6 +71,7 @@ app.use(passport.session());
 app.use("/api/leaderboard", runners);
 app.use("/api/leaderboard", submissions);
 app.use("/api/leaderboard", leaderboardData);
+app.use("/api", questData);
 // app.use("/api", loginData);
 
 if (process.env.RELEASE == "production") {

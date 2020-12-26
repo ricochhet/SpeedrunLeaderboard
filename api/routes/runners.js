@@ -3,7 +3,6 @@ const User = require("../models/user");
 const parser = require("../../database/utils/parser");
 const array = require("../../utils/array");
 const router = require("express").Router();
-const fs = require("fs");
 
 const opts = {
 	encoding: "utf-8",
@@ -86,12 +85,13 @@ router.post("/runners", function (req, res) {
 		ruleset: data.run.ruleset,
 	});
 
-	const removedDuplicates = array.removeObjectDuplicates(
+	// This code block is supposed to remove duplicate submissions, but it's not working at the moment, but it's here for reference :)
+	/*const removedDuplicates = array.removeObjectDuplicates(
 		db.json[data.name.toLowerCase().toString().toLowerCase()]["runs"]
 	);
 	db.json[data.name.toLowerCase().toString().toLowerCase()][
 		"runs"
-	] = removedDuplicates;
+	] = removedDuplicates;*/
 
 	db.save();
 

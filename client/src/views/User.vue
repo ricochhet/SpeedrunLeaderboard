@@ -1,9 +1,10 @@
 <template>
   <div class="m-6">
-    <div v-if="user.status == 404">
+    <!--<div v-if="user.status == 404">
       <h1 class="is-size-4">Oops! That user doesn't appear to exist!</h1>
-    </div>
-    <div v-else-if="user.status != 404">
+    </div>-->
+    <div>
+    <!--<div v-else-if="user.status != 404">-->
       <!--<h1><strong>{{ $route.params.id }}</strong></h1>-->
       <h1 class="is-size-4"><strong>{{ user.name }}</strong></h1>
       <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">

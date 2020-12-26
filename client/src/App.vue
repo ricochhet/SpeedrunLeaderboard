@@ -15,9 +15,10 @@
     <div id="navbarBasicExample" class="navbar-menu">
       <div class="navbar-start">
         <a class="navbar-item" href="/">Home</a>
-        <a class="navbar-item" href="/about">About</a>
+        <a class="navbar-item" href="/quests">Quests</a>
         <a class="navbar-item" href="/runners">Runners</a>
         <a class="navbar-item" href="/submissions">Submit</a>
+        <a class="navbar-item" href="/about">About</a>
         <!--<a class="navbar-item" href="/login">Login</a>-->
       </div>
     </div>
