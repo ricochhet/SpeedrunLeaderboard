@@ -14,6 +14,7 @@ const cryptoHelpers = require("./utils/cryptoHelpers");
 const Database = require("./database/database");
 const dbParser = require("./database/utils/parser");
 const serveStatic = require("serve-static");
+const helmet = require("helmet");
 const history = require("connect-history-api-fallback");
 
 const app = express();
@@ -23,7 +24,7 @@ const runners = require("./api/routes/runners");
 const submissions = require("./api/routes/submissions");
 
 const leaderboardData = require("./api/routes/leaderboard");
-const questData = require('./api/routes/quests');
+const questData = require("./api/routes/quests");
 // const loginData = require("./api/routes/login");
 
 const dbOptions = {
@@ -37,6 +38,7 @@ const users = new Database(
 	dbOptions
 );
 
+app.use(helmet());
 app.use(cookieParser());
 app.use(morgan("tiny"));
 app.use(cors({ credentials: true, origin: `http://localhost:9001` }));
