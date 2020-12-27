@@ -132,12 +132,9 @@ export default {
         .join("");
     },
     getUserData: function() {
-      axios.get("http://localhost:9000/api/user").then((response) => {
-        console.log(response);
-        console.log("Success");
-      }).catch((errors) => {
-        console.log(errors);
-        console.log("Error");
+      axios.get("http://localhost:9000/api/user").then((res) => {
+        console.log(res);
+      }).catch(() => {
         router.push("/");
       });
     },
@@ -146,27 +143,33 @@ export default {
         // Move up DOM tree until first incidence of .item-wrapper and remove
         $(this).closest("#submission").remove();
       });
-      console.log('Approve submission');
-      $.ajax({
-        type: "POST",
-        url: "http://localhost:9000/api/leaderboard/runners",
-        data: JSON.stringify(data),
-        success: function(response) {
-          console.log(response);
-        },
-        dataType: "json",
-        contentType : "application/json"
-      });
 
-      $.ajax({
-        type: "DELETE",
-        url: "http://localhost:9000/api/leaderboard/submissions",
-        data: JSON.stringify({ id: id, name: name }),
-        success: function(response) {
-          console.log(response);
-        },
-        dataType: "json",
-        contentType : "application/json"
+      axios.post("http://localhost:9000/login", { username: "admin", password: "admin" }).then((res) => {
+        const token = res.data.accessToken;
+        
+        $.ajax({
+          type: "POST",
+          url: "http://localhost:9000/api/leaderboard/runners",
+          data: JSON.stringify(data),
+          success: function() {},
+          dataType: "json",
+          contentType : "application/json",
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        $.ajax({
+          type: "DELETE",
+          url: "http://localhost:9000/api/leaderboard/submissions",
+          data: JSON.stringify({ id: id, name: name }),
+          success: function() {},
+          dataType: "json",
+          contentType : "application/json",
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
       });
     },
     deleteSubmission: function(id, name) {
@@ -174,16 +177,21 @@ export default {
         // Move up DOM tree until first incidence of .item-wrapper and remove
         $(this).closest("#submission").remove();
       });
-      console.log('Delete submission');
-      $.ajax({
-        type: "DELETE",
-        url: "http://localhost:9000/api/leaderboard/submissions",
-        data: JSON.stringify({ id: id, name: name }),
-        success: function(response) {
-          console.log(response);
-        },
-        dataType: "json",
-        contentType : "application/json"
+
+      axios.post("http://localhost:9000/login", { username: "admin", password: "admin" }).then((res) => {
+        const token = res.data.accessToken;
+
+        $.ajax({
+          type: "DELETE",
+          url: "http://localhost:9000/api/leaderboard/submissions",
+          data: JSON.stringify({ id: id, name: name }),
+          success: function() {},
+          dataType: "json",
+          contentType : "application/json",
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
       });
     },
     banUser: function(id, name) {
@@ -191,25 +199,33 @@ export default {
         // Move up DOM tree until first incidence of .item-wrapper and remove
         $(this).closest("#submission").remove();
       });
-      $.ajax({
-        type: "POST",
-        url: "http://localhost:9000/api/leaderboard/runners/bans",
-        data: JSON.stringify({ name: name }),
-        success: function(response) {
-          console.log(response);
-        },
-        dataType: "json",
-        contentType : "application/json"
-      });
-      $.ajax({
-        type: "DELETE",
-        url: "http://localhost:9000/api/leaderboard/submissions",
-        data: JSON.stringify({ id: id, name: name }),
-        success: function(response) {
-          console.log(response);
-        },
-        dataType: "json",
-        contentType : "application/json"
+
+      axios.post("http://localhost:9000/login", { username: "admin", password: "admin" }).then((res) => {
+        const token = res.data.accessToken;
+
+        $.ajax({
+          type: "POST",
+          url: "http://localhost:9000/api/leaderboard/runners/bans",
+          data: JSON.stringify({ name: name }),
+          success: function() {},
+          dataType: "json",
+          contentType : "application/json",
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        $.ajax({
+          type: "DELETE",
+          url: "http://localhost:9000/api/leaderboard/submissions",
+          data: JSON.stringify({ id: id, name: name }),
+          success: function() {},
+          dataType: "json",
+          contentType : "application/json",
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
       });
     },
     deleteExisting: function(id, name) {
@@ -217,16 +233,21 @@ export default {
         // Move up DOM tree until first incidence of .item-wrapper and remove
         $(this).closest("#runner").remove();
       });
-      console.log('Delete existing');
-      $.ajax({
-        type: "DELETE",
-        url: "http://localhost:9000/api/leaderboard/runners",
-        data: JSON.stringify({ id: id, name: name }),
-        success: function(response) {
-          console.log(response);
-        },
-        dataType: "json",
-        contentType : "application/json"
+
+      axios.post("http://localhost:9000/login", { username: "admin", password: "admin" }).then((res) => {
+        const token = res.data.accessToken;
+        
+        $.ajax({
+          type: "DELETE",
+          url: "http://localhost:9000/api/leaderboard/runners",
+          data: JSON.stringify({ id: id, name: name }),
+          success: function() {},
+          dataType: "json",
+          contentType : "application/json",
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
       });
     },
     banExisting: function(id, name) {
@@ -234,113 +255,144 @@ export default {
         // Move up DOM tree until first incidence of .item-wrapper and remove
         $(this).closest("#runner").remove();
       });
-      $.ajax({
-        type: "POST",
-        url: "http://localhost:9000/api/leaderboard/runners/bans",
-        data: JSON.stringify({ name: name }),
-        success: function(response) {
-          console.log(response);
-        },
-        dataType: "json",
-        contentType : "application/json"
-      });
-      $.ajax({
-        type: "DELETE",
-        url: "http://localhost:9000/api/leaderboard/runners",
-        data: JSON.stringify({ id: id, name: name }),
-        success: function(response) {
-          console.log(response);
-        },
-        dataType: "json",
-        contentType : "application/json"
+
+      axios.post("http://localhost:9000/login", { username: "admin", password: "admin" }).then((res) => {
+        const token = res.data.accessToken;
+
+        $.ajax({
+          type: "POST",
+          url: "http://localhost:9000/api/leaderboard/runners/bans",
+          data: JSON.stringify({ name: name }),
+          success: function() {},
+          dataType: "json",
+          contentType : "application/json",
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        $.ajax({
+          type: "DELETE",
+          url: "http://localhost:9000/api/leaderboard/runners",
+          data: JSON.stringify({ id: id, name: name }),
+          success: function() {},
+          dataType: "json",
+          contentType : "application/json",
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
       });
     },
   },
   mounted() {
     this.getUserData();
-    fetch(API_URL_LEADERBOARD)
-      .then(response => response.json())
-      .then(result => {
-        console.log(result);
-        const weapons = [];
-        const platforms = [];
-        const rulesets = [];
 
-        weapons.push({
-          url: this.toURL("all"),
-          name: "All"
-        });
+    axios.post("http://localhost:9000/login", { username: "admin", password: "admin" }).then((res) => {
+      const token = res.data.accessToken;
+    
+      fetch(API_URL_LEADERBOARD, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+        .then(response => response.json())
+        .then(result => {
+          const weapons = [];
+          const platforms = [];
+          const rulesets = [];
 
-        for (const i in result.rise.weapons) {
           weapons.push({
-            url: this.toURL(result.rise.weapons[i].name),
-            name: result.rise.weapons[i].name
+            url: this.toURL("all"),
+            name: "All"
           });
-        }
 
-        platforms.push({
-          url: this.toURL("all"),
-          name: "All"
-        });
+          for (const i in result.rise.weapons) {
+            weapons.push({
+              url: this.toURL(result.rise.weapons[i].name),
+              name: result.rise.weapons[i].name
+            });
+          }
 
-        for (const i in result.rise.platforms) {
           platforms.push({
-            url: this.toURL(result.rise.platforms[i].name),
-            name: result.rise.platforms[i].name
+            url: this.toURL("all"),
+            name: "All"
           });
-        }
 
-        rulesets.push({
-          url: this.toURL("all"),
-          name: "All"
-        });
+          for (const i in result.rise.platforms) {
+            platforms.push({
+              url: this.toURL(result.rise.platforms[i].name),
+              name: result.rise.platforms[i].name
+            });
+          }
 
-        for (const i in result.rise.rulesets) {
           rulesets.push({
-            url: this.toURL(result.rise.rulesets[i].name),
-            name: result.rise.rulesets[i].name
+            url: this.toURL("all"),
+            name: "All"
           });
-        }
 
-        this.leaderboard.rise_weapons = weapons;
-        this.leaderboard.rise_platforms = platforms;
-        this.leaderboard.rise_rulesets = rulesets;
-        //this.leaderboard.rise_quests = result.rise.quests;
-    });
-    fetch(API_URL_BANS)
-      .then(response => response.json())
-      .then(result => {
-        this.bans = result;
-    });
-    fetch(API_URL)
-      .then(response => response.json())
-      .then(result => {
-        // Get each individual submission per user
-        const userSubmissions = [];
-        for (const i in result) {
-          const name = result[i]["name"];
-          const runs = result[i]["runs"];
-          for (const k in runs) {
-            userSubmissions.push({name: name, run: runs[k]});
+          for (const i in result.rise.rulesets) {
+            rulesets.push({
+              url: this.toURL(result.rise.rulesets[i].name),
+              name: result.rise.rulesets[i].name
+            });
           }
-        }
 
-        this.submissions = userSubmissions;
-    });
-    fetch(API_URL_RUNS)
-      .then(response => response.json())
-      .then(result => {
-        // Get each individual submission per user
-        const userRuns = [];
-        for (const i in result) {
-          const name = result[i]["name"];
-          const runs = result[i]["runs"];
-          for (const k in runs) {
-            userRuns.push({name: name, run: runs[k]});
+          this.leaderboard.rise_weapons = weapons;
+          this.leaderboard.rise_platforms = platforms;
+          this.leaderboard.rise_rulesets = rulesets;
+          //this.leaderboard.rise_quests = result.rise.quests;
+      });
+
+      fetch(API_URL_BANS, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+        .then(response => response.json())
+        .then(result => {
+          this.bans = result;
+      });
+
+      fetch(API_URL, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+        .then(response => response.json())
+        .then(result => {
+          // Get each individual submission per user
+          const userSubmissions = [];
+          for (const i in result) {
+            const name = result[i]["name"];
+            const runs = result[i]["runs"];
+            for (const k in runs) {
+              userSubmissions.push({name: name, run: runs[k]});
+            }
           }
-        }
 
-        this.runners = userRuns;
+          this.submissions = userSubmissions;
+      });
+
+      fetch(API_URL_RUNS, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+        .then(response => response.json())
+        .then(result => {
+          // Get each individual submission per user
+          const userRuns = [];
+          for (const i in result) {
+            const name = result[i]["name"];
+            const runs = result[i]["runs"];
+            for (const k in runs) {
+              userRuns.push({name: name, run: runs[k]});
+            }
+          }
+
+          this.runners = userRuns;
+      });
     });
   }
 };

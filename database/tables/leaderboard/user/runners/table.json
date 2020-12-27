@@ -1,1 +1,17 @@
-{}
+{
+	"approveme": {
+		"name": "ApproveMe",
+		"runs": [
+			{
+				"id": "52d91751f2185974c0b79e1ff9fa6506",
+				"name": "ApproveMe",
+				"quest": "The Greatest Jagras",
+				"time": "49'59\"99",
+				"weapon": "Hunting Horn",
+				"link": "https://youtube.com",
+				"platform": "Switch (DEMO)",
+				"ruleset": "TA Wiki"
+			}
+		]
+	}
+}

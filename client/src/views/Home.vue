@@ -6,6 +6,7 @@
 
 <script>
 const API_URL = "http://localhost:9000/api/leaderboard/runners/all";
+import axios from "axios";
 
 export default {
   name: "Home",
@@ -14,10 +15,18 @@ export default {
     runners: []
   }),
   mounted() {
-    fetch(API_URL)
-      .then(response => response.json())
-      .then(result => {
-        this.runners = result;
+    axios.post("http://localhost:9000/login", { username: "admin", password: "admin" }).then((res) => {
+      const token = res.data.accessToken;
+
+      fetch(API_URL, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+        .then(response => response.json())
+        .then(result => {
+          this.runners = result;
+      });
     });
   }
 };

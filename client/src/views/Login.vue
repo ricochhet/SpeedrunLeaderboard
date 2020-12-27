@@ -40,57 +40,62 @@ export default {
     error: ""
   }),
   mounted() {
-    $("#submissionForm").on("submit", function(_event) {
-      _event.preventDefault();
-      let _email = document.forms["submissionForm"]["email"].value;
-      let _password = document.forms["submissionForm"]["password"].value;
+    axios.post("http://localhost:9000/login", { username: "admin", password: "admin" }).then((res) => {
+      const token = res.data.accessToken;
 
-      const parse = parser();
-      function parser() {
-        const statusObject = {status: 0};
-        if (_email == null || _email == "") { $("#is-runner-blank").css("display", "block"); $("#runner-text-field").addClass("is-danger"); statusObject.status = 0; }
-        if (_password == null || _password == "") { $("#is-time-blank").css("display", "block"); $("#time-text-field").addClass("is-danger"); statusObject.status = 0; }
-        if (_email != null && _email != "" && _password != null && _password != "") { statusObject.status = 1; }
-        _email = _email.toString().substring(0, 64);
-        _password = _password.toString().substring(0, 64);
-        return statusObject;
-      }
+      $("#submissionForm").on("submit", function(_event) {
+        _event.preventDefault();
+        let _email = document.forms["submissionForm"]["email"].value;
+        let _password = document.forms["submissionForm"]["password"].value;
 
-      const dataMap = new Map();
-      const array = JSON.stringify($("#submissionForm").serializeArray());
-      const store = JSON.parse(array);
-      for (const i in store) {
-        dataMap.set(store[i].name, store[i].value);
-      }
-
-      let userData = {
-        email: dataMap.get("email"),
-        password: dataMap.get("password")
-      }
-
-      if (parse.status == 1) {
-        // Axios was used here for this specific post request because ajax returned 400 (bad requests)
-        axios.defaults.withCredentials = true;
-        axios.defaults.headers = {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': 'http://localhost:9001/',
-          'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE'
+        const parse = parser();
+        function parser() {
+          const statusObject = {status: 0};
+          if (_email == null || _email == "") { $("#is-runner-blank").css("display", "block"); $("#runner-text-field").addClass("is-danger"); statusObject.status = 0; }
+          if (_password == null || _password == "") { $("#is-time-blank").css("display", "block"); $("#time-text-field").addClass("is-danger"); statusObject.status = 0; }
+          if (_email != null && _email != "" && _password != null && _password != "") { statusObject.status = 1; }
+          _email = _email.toString().substring(0, 64);
+          _password = _password.toString().substring(0, 64);
+          return statusObject;
         }
-        axios.post("http://localhost:9000/api/login", userData).then((response) => {    
-          console.log("Logged in");
-          router.push("/dashboard");
-          console.log(response);
-          $("#submissionForm").each(function () {
-            this.reset();
+
+        const dataMap = new Map();
+        const array = JSON.stringify($("#submissionForm").serializeArray());
+        const store = JSON.parse(array);
+        for (const i in store) {
+          dataMap.set(store[i].name, store[i].value);
+        }
+
+        let userData = {
+          email: dataMap.get("email"),
+          password: dataMap.get("password")
+        }
+
+        if (parse.status == 1) {
+          // Axios was used here for this specific post request because ajax returned 400 (bad requests)
+          axios.defaults.withCredentials = true;
+          axios.defaults.headers = {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': 'http://localhost:9001/',
+            'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE'
+          }
+          axios.post("http://localhost:9000/api/login", userData, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          }).then(() => {    
+            router.push("/dashboard");
+            $("#submissionForm").each(function () {
+              this.reset();
+            });
+          })    
+          .catch(() => {
+            $("#submissionForm").each(function () {
+              this.reset();
+            });
           });
-        })    
-        .catch(() => {
-          console.log("Cannot log in");
-          $("#submissionForm").each(function () {
-            this.reset();
-          });
-        });
-      }
+        }
+      });
     });
   }
 };

@@ -122,96 +122,83 @@ export default {
   },
   mounted() {
     const self = this;
-    
-    $("#submissionForm").on("submit", function(_event) {
-      _event.preventDefault();
-      let _runner = document.forms["submissionForm"]["runner"].value;
-      let _time = document.forms["submissionForm"]["time"].value;
-      let _link = document.forms["submissionForm"]["link"].value;
-      
-      let _platform = document.forms["submissionForm"]["platform"].value;
-      let _ruleset = document.forms["submissionForm"]["ruleset"].value;
-      let _weapon = document.forms["submissionForm"]["weapon"].value;
-      let _quest = document.forms["submissionForm"]["quest"].value;
+    axios.post("http://localhost:9000/login", { username: "admin", password: "admin" }).then((res) => {
+      const token = res.data.accessToken;
 
-      const parse = parser();
-      function parser() {
-        const statusObject = {status: 0};
-        if (_runner == null || _runner == "") { $("#is-runner-blank").css("display", "block"); $("#runner-text-field").addClass("is-danger"); statusObject.status = 0; }
-        if (_time == null || _time == "") { $("#is-time-blank").css("display", "block"); $("#time-text-field").addClass("is-danger"); statusObject.status = 0; }
-        if (_link == null || _link == "") { $("#is-link-blank").css("display", "block"); $("#link-text-field").addClass("is-danger"); statusObject.status = 0; }
-        if (_runner != null && _runner != "" && _time != null && _time != "" && _link != null && _link != "") { statusObject.status = 1; }
-        _runner = _runner.toString().substring(0, 64);
-        _time = _time.toString().substring(0, 64);
-        _link = _link.toString().substring(0, 64);
-        return statusObject;
-      }
+      $("#submissionForm").on("submit", function(_event) {
+        _event.preventDefault();
+        let _runner = document.forms["submissionForm"]["runner"].value;
+        let _time = document.forms["submissionForm"]["time"].value;
+        let _link = document.forms["submissionForm"]["link"].value;
+        
+        let _platform = document.forms["submissionForm"]["platform"].value;
+        let _ruleset = document.forms["submissionForm"]["ruleset"].value;
+        let _weapon = document.forms["submissionForm"]["weapon"].value;
+        let _quest = document.forms["submissionForm"]["quest"].value;
 
-      if (parse.status == 1) {
-        for (const i in self.bans) {
-          if (_runner.toString() == self.bans[i]["name"] || self.toURL(_runner.toString().toLowerCase()) == self.bans[i]["url"]) return console.log({ status: "401" });
+        const parse = parser();
+        function parser() {
+          const statusObject = {status: 0};
+          if (_runner == null || _runner == "") { $("#is-runner-blank").css("display", "block"); $("#runner-text-field").addClass("is-danger"); statusObject.status = 0; }
+          if (_time == null || _time == "") { $("#is-time-blank").css("display", "block"); $("#time-text-field").addClass("is-danger"); statusObject.status = 0; }
+          if (_link == null || _link == "") { $("#is-link-blank").css("display", "block"); $("#link-text-field").addClass("is-danger"); statusObject.status = 0; }
+          if (_runner != null && _runner != "" && _time != null && _time != "" && _link != null && _link != "") { statusObject.status = 1; }
+          _runner = _runner.toString().substring(0, 64);
+          _time = _time.toString().substring(0, 64);
+          _link = _link.toString().substring(0, 64);
+          return statusObject;
         }
-        /*const data = [
-          { "name": "id", "value": `${_runner}:${self.generateAuthToken(16)}` },
-          { "name": "runner", "value": _runner },
-          { "name": "time", "value": _time },
-          { "name": "link", "value": _link },
-          { "name": "platform", "value": _platform },
-          { "name": "ruleset", "value": _ruleset },
-          { "name": "weapon", "value": _weapon },
-          { "name": "quest", "value": _quest }
-        ]*/
 
-        const data = {
-          name: _runner,
-          id: self.generateAuthToken(16),
-          time: _time,
-          link: _link,
-          platform: _platform,
-          ruleset: _ruleset,
-          weapon: _weapon,
-          quest: _quest
-        };
+        if (parse.status == 1) {
+          for (const i in self.bans) {
+            if (_runner.toString() == self.bans[i]["name"] || self.toURL(_runner.toString().toLowerCase()) == self.bans[i]["url"]) return;
+          }
 
-        axios.post("http://localhost:9000/api/leaderboard/submissions", data).then((response) => {
-          console.log(response);
-          $("#submissionForm").each(function () {
-            this.reset();
-          });
-        }).catch((errors) => {
-          console.log(errors);
-          console.log("Error");
-        });
+          const data = {
+            name: _runner,
+            id: self.generateAuthToken(16),
+            time: _time,
+            link: _link,
+            platform: _platform,
+            ruleset: _ruleset,
+            weapon: _weapon,
+            quest: _quest
+          };
 
-        /*$.ajax({
-          type: "POST",
-          url: "http://localhost:9000/api/leaderboard/submissions",
-          data: JSON.stringify(data),
-          success: function(response) {
-            console.log(response);
+          axios.post("http://localhost:9000/api/leaderboard/submissions", data, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          }).then(() => {
             $("#submissionForm").each(function () {
               this.reset();
             });
-          },
-          dataType: "text",
-          contentType : "application/json"
-        }); */
-      }
-    });
+          }).catch(() => {});
+        }
+      });
 
-    fetch(API_URL_BANS)
-      .then(response => response.json())
-      .then(result => {
-        this.bans = result;
-    });
+      fetch(API_URL_BANS, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+        .then(response => response.json())
+        .then(result => {
+          this.bans = result;
+      });
 
-    fetch(API_URL)
-      .then(response => response.json())
-      .then(result => {
-        this.leaderboard.rise_platforms = result.rise.platforms;
-        this.leaderboard.rise_rulesets = result.rise.rulesets;
-        this.leaderboard.rise_weapons = result.rise.weapons;
-        this.leaderboard.rise_quests = result.rise.quests;
+      fetch(API_URL, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+        .then(response => response.json())
+        .then(result => {
+          this.leaderboard.rise_platforms = result.rise.platforms;
+          this.leaderboard.rise_rulesets = result.rise.rulesets;
+          this.leaderboard.rise_weapons = result.rise.weapons;
+          this.leaderboard.rise_quests = result.rise.quests;
+      });
     });
   }
 };

@@ -9,6 +9,8 @@
 </template>
 <script>
 const API_URL = "http://localhost:9000/api/leaderboard/runners/all";
+import axios from "axios";
+
 export default {
   name: "Users",
   data: () => ({
@@ -32,17 +34,25 @@ export default {
     }
   },
   mounted() {
-    fetch(API_URL)
-      .then(response => response.json())
-      .then(result => {
-        const users = [];
+    axios.post("http://localhost:9000/login", { username: "admin", password: "admin" }).then((res) => {
+      const token = res.data.accessToken;
 
-        for (const i in result) {
-          result[i]["url"] = this.toURL(result[i]["name"].toLowerCase());
-          users.push(result[i])
+      fetch(API_URL, {
+        headers: {
+          'Authorization': `Bearer ${token}`
         }
+      })
+        .then(response => response.json())
+        .then(result => {
+          const users = [];
 
-        this.users = users;
+          for (const i in result) {
+            result[i]["url"] = this.toURL(result[i]["name"].toLowerCase());
+            users.push(result[i])
+          }
+
+          this.users = users;
+      });
     });
   }
 };

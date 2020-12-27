@@ -1,1 +1,18 @@
-{}
+{
+	"test": {
+		"name": "test",
+		"runs": []
+	},
+	"approveme": {
+		"name": "ApproveMe",
+		"runs": []
+	},
+	"banme": {
+		"name": "BanMe",
+		"runs": []
+	},
+	"deleteme": {
+		"name": "DeleteMe",
+		"runs": []
+	}
+}

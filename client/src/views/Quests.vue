@@ -15,6 +15,8 @@
 </template>
 <script>
 const API_URL = "http://localhost:9000/api/rise/quests";
+import axios from "axios";
+
 export default {
   name: "Quests",
   data: () => ({
@@ -22,20 +24,28 @@ export default {
     quests: []
   }),
   mounted() {
-    fetch(API_URL)
-      .then(response => response.json())
-      .then(result => {
-        const object = {
-          rank_one: [],
-          rank_two: []
-        }
+    axios.post("http://localhost:9000/login", { username: "admin", password: "admin" }).then((res) => {
+      const token = res.data.accessToken;
 
-        for (const i in result) {
-          if (result[i].rank == 1) object.rank_one.push(result[i]);
-          if (result[i].rank == 2) object.rank_two.push(result[i]);
-        }
+      fetch(API_URL, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        .then(response => response.json())
+        .then(result => {
+          const object = {
+            rank_one: [],
+            rank_two: []
+          }
 
-        this.quests = object;
+          for (const i in result) {
+            if (result[i].rank == 1) object.rank_one.push(result[i]);
+            if (result[i].rank == 2) object.rank_two.push(result[i]);
+          }
+
+          this.quests = object;
+      });
     });
   }
 };

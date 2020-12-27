@@ -33,6 +33,8 @@
   </div>
 </template>
 <script>
+import axios from "axios";
+
 export default {
   name: "User",
   data: () => ({
@@ -40,13 +42,21 @@ export default {
     user: []
   }),
   mounted() {
-    // API_URL is placed here because it needs to reference the params
-    const API_URL = "http://localhost:9000/api/leaderboard/runners/" + this.$route.params.id;
+    axios.post("http://localhost:9000/login", { username: "admin", password: "admin" }).then((res) => {
+      const token = res.data.accessToken;
 
-    fetch(API_URL)
-      .then(response => response.json())
-      .then(result => {
-        this.user = result;
+      // API_URL is placed here because it needs to reference the params
+      const API_URL = "http://localhost:9000/api/leaderboard/runners/" + this.$route.params.id;
+
+      fetch(API_URL, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+        .then(response => response.json())
+        .then(result => {
+          this.user = result;
+      });
     });
   }
 };

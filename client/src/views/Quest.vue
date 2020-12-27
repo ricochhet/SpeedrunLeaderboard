@@ -79,6 +79,8 @@
   </div>
 </template>
 <script>
+import axios from "axios";
+
 export default {
   name: "Quest",
   data: () => ({
@@ -108,67 +110,77 @@ export default {
     }
   },
   mounted() {
-    // API_URL is placed here because it needs to reference the params
-    const API_URL = `http://localhost:9000/api/rise/quests/${this.$route.params.name}/${this.$route.params.weapon}/${this.$route.params.ruleset}/${this.$route.params.platform}`;
-    const API_URL_LEADERBOARD = `http://localhost:9000/api/leaderboard/leaderboard`;
+    axios.post("http://localhost:9000/login", { username: "admin", password: "admin" }).then((res) => {
+      const token = res.data.accessToken;
 
-    fetch(API_URL)
-      .then(response => response.json())
-      .then(result => {
-        console.log(result);
-        // We'll assume the first result has the quest name in it so we can easily reference it.
-        this.quest = result[0]["quest"];
-        this.runs = result;
-    });
+      // API_URL is placed here because it needs to reference the params
+      const API_URL = `http://localhost:9000/api/rise/quests/${this.$route.params.name}/${this.$route.params.weapon}/${this.$route.params.ruleset}/${this.$route.params.platform}`;
+      const API_URL_LEADERBOARD = `http://localhost:9000/api/leaderboard/leaderboard`;
 
-    fetch(API_URL_LEADERBOARD)
-      .then(response => response.json())
-      .then(result => {
-        console.log(result);
-        const weapons = [];
-        const platforms = [];
-        const rulesets = [];
+      fetch(API_URL, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+        .then(response => response.json())
+        .then(result => {
+          // We'll assume the first result has the quest name in it so we can easily reference it.
+          this.quest = result[0]["quest"];
+          this.runs = result;
+      });
 
-        weapons.push({
-          url: this.toURL("all"),
-          name: "All"
-        });
+      fetch(API_URL_LEADERBOARD, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+        .then(response => response.json())
+        .then(result => {
+          const weapons = [];
+          const platforms = [];
+          const rulesets = [];
 
-        for (const i in result.rise.weapons) {
           weapons.push({
-            url: this.toURL(result.rise.weapons[i].name),
-            name: result.rise.weapons[i].name
+            url: this.toURL("all"),
+            name: "All"
           });
-        }
 
-        platforms.push({
-          url: this.toURL("all"),
-          name: "All"
-        });
+          for (const i in result.rise.weapons) {
+            weapons.push({
+              url: this.toURL(result.rise.weapons[i].name),
+              name: result.rise.weapons[i].name
+            });
+          }
 
-        for (const i in result.rise.platforms) {
           platforms.push({
-            url: this.toURL(result.rise.platforms[i].name),
-            name: result.rise.platforms[i].name
+            url: this.toURL("all"),
+            name: "All"
           });
-        }
 
-        rulesets.push({
-          url: this.toURL("all"),
-          name: "All"
-        });
+          for (const i in result.rise.platforms) {
+            platforms.push({
+              url: this.toURL(result.rise.platforms[i].name),
+              name: result.rise.platforms[i].name
+            });
+          }
 
-        for (const i in result.rise.rulesets) {
           rulesets.push({
-            url: this.toURL(result.rise.rulesets[i].name),
-            name: result.rise.rulesets[i].name
+            url: this.toURL("all"),
+            name: "All"
           });
-        }
 
-        this.leaderboard.rise_weapons = weapons;
-        this.leaderboard.rise_platforms = platforms;
-        this.leaderboard.rise_rulesets = rulesets;
-        //this.leaderboard.rise_quests = result.rise.quests;
+          for (const i in result.rise.rulesets) {
+            rulesets.push({
+              url: this.toURL(result.rise.rulesets[i].name),
+              name: result.rise.rulesets[i].name
+            });
+          }
+
+          this.leaderboard.rise_weapons = weapons;
+          this.leaderboard.rise_platforms = platforms;
+          this.leaderboard.rise_rulesets = rulesets;
+          //this.leaderboard.rise_quests = result.rise.quests;
+      });
     });
   }
 };

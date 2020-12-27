@@ -1,1 +1,6 @@
-{}
+{
+	"banme": {
+		"name": "BanMe",
+		"url": "banme"
+	}
+}

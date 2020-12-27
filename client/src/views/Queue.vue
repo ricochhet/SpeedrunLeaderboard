@@ -30,6 +30,7 @@
 </template>
 <script>
 const API_URL = "http://localhost:9000/api/leaderboard/submissions/all";
+import axios from "axios";
 
 export default {
   name: "Queue",
@@ -38,20 +39,28 @@ export default {
     submissions: []
   }),
   mounted() {
-    fetch(API_URL)
-      .then(response => response.json())
-      .then(result => {
-        // Get each individual submission per user
-        const userSubmissions = [];
-        for (const i in result) {
-          const name = result[i]["name"];
-          const runs = result[i]["runs"];
-          for (const k in runs) {
-            userSubmissions.push({name: name, run: runs[k]});
-          }
-        }
+    axios.post("http://localhost:9000/login", { username: "admin", password: "admin" }).then((res) => {
+      const token = res.data.accessToken;
 
-        this.submissions = userSubmissions;
+      fetch(API_URL, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+        .then(response => response.json())
+        .then(result => {
+          // Get each individual submission per user
+          const userSubmissions = [];
+          for (const i in result) {
+            const name = result[i]["name"];
+            const runs = result[i]["runs"];
+            for (const k in runs) {
+              userSubmissions.push({name: name, run: runs[k]});
+            }
+          }
+
+          this.submissions = userSubmissions;
+      });
     });
   }
 };

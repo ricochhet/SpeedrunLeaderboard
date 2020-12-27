@@ -16,6 +16,11 @@ const dbParser = require("./database/utils/parser");
 const serveStatic = require("serve-static");
 const helmet = require("helmet");
 const history = require("connect-history-api-fallback");
+const jwt = require("jsonwebtoken");
+// temp
+const accessTokenSecret = "foo";
+const refreshTokenSecret = "yourrefreshtokensecrethere";
+const refreshTokens = [];
 
 const app = express();
 
@@ -33,10 +38,12 @@ const dbOptions = {
 	spacing: "\t",
 };
 
-const users = new Database(
+const verifierLogins = new Database(
 	"./database/tables/leaderboard/logins.json",
 	dbOptions
 );
+
+const apiSubLogins = new Database("./database/tables/logins.json", dbOptions);
 
 app.use(helmet());
 app.use(cookieParser());
@@ -69,13 +76,6 @@ if (process.env.AUTH_MIDDLEWARE == "cookie-session") {
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Routers
-app.use("/api/leaderboard", runners);
-app.use("/api/leaderboard", submissions);
-app.use("/api/leaderboard", leaderboardData);
-app.use("/api", questData);
-// app.use("/api", loginData);
-
 if (process.env.RELEASE == "production") {
 	const publicRoot = process.env.PUBLIC_ROOT;
 	const indexFile = process.env.INDEX_FILE;
@@ -105,6 +105,93 @@ if (process.env.RELEASE == "production") {
 	throw `PROCESS ENVAR IS NOT SET TO EITHER 'development' or 'production'`;
 }
 
+app.post("/login", (req, res) => {
+	const { username, password } = req.body;
+	let db = dbParser.toArray(apiSubLogins.json);
+	let user = db.find((user) => {
+		return user.username === username && user.password === password;
+	});
+
+	if (user) {
+		// generate an access token
+		const accessToken = jwt.sign(
+			{ username: user.username, role: user.role },
+			accessTokenSecret,
+			{ expiresIn: "20m" }
+		);
+		const refreshToken = jwt.sign(
+			{ username: user.username, role: user.role },
+			refreshTokenSecret
+		);
+
+		refreshTokens.push(refreshToken);
+
+		res.json({
+			accessToken,
+			refreshToken,
+		});
+	} else {
+		res.send("Username or password incorrect");
+	}
+});
+
+app.post("/token", (req, res) => {
+	const { token } = req.body;
+
+	if (!token) {
+		return res.sendStatus(401);
+	}
+
+	if (!refreshTokens.includes(token)) {
+		return res.sendStatus(403);
+	}
+
+	jwt.verify(token, refreshTokenSecret, (err, user) => {
+		if (err) {
+			return res.sendStatus(403);
+		}
+
+		const accessToken = jwt.sign(
+			{ username: user.username, role: user.role },
+			accessTokenSecret,
+			{ expiresIn: "20m" }
+		);
+
+		res.json({
+			accessToken,
+		});
+	});
+});
+
+app.post("/logout", (req, res) => {
+	const { token } = req.body;
+	refreshTokens = refreshTokens.filter((token) => t !== token);
+
+	res.send("Logout successful");
+});
+
+// We use a JWT middleware here because why not :)
+const authenticateJWT = (req, res, next) => {
+	const authHeader = req.headers.authorization;
+
+	if (authHeader) {
+		const token = authHeader.split(" ")[1];
+
+		jwt.verify(token, accessTokenSecret, (err, user) => {
+			if (err) {
+				return res.sendStatus(403);
+			}
+
+			req.user = user;
+			next();
+		});
+	} else {
+		res.sendStatus(401);
+	}
+};
+
+// API DASHBOARD LOGIN
+
 app.post("/api/login", (req, res, next) => {
 	console.log(req.body);
 	passport.authenticate("local", (err, user, info) => {
@@ -130,7 +217,7 @@ app.get("/api/logout", function (req, res) {
 	return res.send();
 });
 
-const authMiddleware = (req, res, next) => {
+const dashboardAuthMiddleware = (req, res, next) => {
 	console.log(req.isAuthenticated());
 	if (!req.isAuthenticated()) {
 		console.log("You are not authenticated");
@@ -141,8 +228,8 @@ const authMiddleware = (req, res, next) => {
 	}
 };
 
-app.get("/api/user", authMiddleware, (req, res) => {
-	let db = dbParser.toArray(users.json);
+app.get("/api/user", dashboardAuthMiddleware, (req, res) => {
+	let db = dbParser.toArray(verifierLogins.json);
 	let user = db.find((user) => {
 		return user.id === req.session.passport.user;
 	});
@@ -158,7 +245,7 @@ passport.use(
 			passwordField: "password",
 		},
 		(username, password, done) => {
-			let db = dbParser.toArray(users.json);
+			let db = dbParser.toArray(verifierLogins.json);
 			let user = db.find((user) => {
 				return user.email === username && user.password === password;
 			});
@@ -180,7 +267,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((id, done) => {
-	let db = dbParser.toArray(users.json);
+	let db = dbParser.toArray(verifierLogins.json);
 	let user = db.find((user) => {
 		return user.id === id;
 	});
@@ -188,6 +275,12 @@ passport.deserializeUser((id, done) => {
 	done(null, user);
 	console.log("Deserialize user");
 });
+
+// Routers
+app.use("/api/leaderboard", authenticateJWT, runners);
+app.use("/api/leaderboard", authenticateJWT, submissions);
+app.use("/api/leaderboard", authenticateJWT, leaderboardData);
+app.use("/api", authenticateJWT, questData);
 
 app.listen(port, () => {
 	winston.log({
