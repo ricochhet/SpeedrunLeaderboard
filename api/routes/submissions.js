@@ -94,7 +94,6 @@ router.delete("/submissions", function (req, res) {
 		});
 
 		db.json[parser.toURL(runner.toString().toLowerCase())]["runs"] = items;
-		console.log
 		db.save();
 	} catch (e) {
 		res.json({ message: "Could not parse database" });
@@ -124,14 +123,14 @@ router.post("/submissions", function (req, res) {
 		}
 
 		user.push({
-			name: data["name"],
-			id: data["id"],
-			quest: data["quest"],
-			time: data["time"],
-			weapon: data["weapon"],
-			link: data["link"],
-			platform: data["platform"],
-			ruleset: data["ruleset"],
+			name: parser.sanitize(data["name"]),
+			id: parser.sanitize(data["id"]),
+			quest: parser.sanitize(data["quest"]),
+			time: parser.sanitize(data["time"]),
+			weapon: parser.sanitize(data["weapon"]),
+			link: parser.sanitize(data["link"]),
+			platform: parser.sanitize(data["platform"]),
+			ruleset: parser.sanitize(data["ruleset"]),
 		});
 
 		db.save();

@@ -1,4 +1,9 @@
 <template>
+  <div class="m-6">
+    <p class="is-size-3"><strong>SUBMISSION FORM</strong></p>
+    <p>Submit your speedrun, only top 3 runs are accepted. Please read the rules before submitting.</p>
+    <a href="/rules">Rules</a>
+  </div>
   <form id="submissionForm">
     <div class="m-6" style="width:25%;">
       <div class="field">
@@ -79,6 +84,7 @@
 </template>
 <script>
 const API_URL = "http://localhost:9000/api/leaderboard/leaderboard";
+const API_URL_BANS = `http://localhost:9000/api/leaderboard/runners/bans/all`;
 import $ from "jquery";
 import axios from "axios";
 import crypto from "crypto";
@@ -92,7 +98,8 @@ export default {
       rise_rulesets: [],
       rise_weapons: [],
       rise_quests: []
-    }
+    },
+    bans: [],
   }),
   methods: {
     generateAuthToken: function(byteCount) {
@@ -141,6 +148,9 @@ export default {
       }
 
       if (parse.status == 1) {
+        for (const i in self.bans) {
+          if (_runner.toString() == self.bans[i]["name"] || self.toURL(_runner.toString().toLowerCase()) == self.bans[i]["url"]) return console.log({ status: "401" });
+        }
         /*const data = [
           { "name": "id", "value": `${_runner}:${self.generateAuthToken(16)}` },
           { "name": "runner", "value": _runner },
@@ -187,6 +197,12 @@ export default {
           contentType : "application/json"
         }); */
       }
+    });
+
+    fetch(API_URL_BANS)
+      .then(response => response.json())
+      .then(result => {
+        this.bans = result;
     });
 
     fetch(API_URL)

@@ -37,6 +37,10 @@ class Parser {
 			return str.toString().split('"')[1];
 		}
 	}
+
+	sanitize(str, strlen) {
+		return str.toString().substring(0, strlen);
+	}
 }
 
 module.exports = new Parser();

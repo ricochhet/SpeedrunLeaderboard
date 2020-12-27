@@ -17,6 +17,7 @@
         <a class="navbar-item" href="/">Home</a>
         <a class="navbar-item" href="/quests">Quests</a>
         <a class="navbar-item" href="/runners">Runners</a>
+        <a class="navbar-item" href="/rules">Rules</a>
         <a class="navbar-item" href="/submissions">Submit</a>
         <a class="navbar-item" href="/queue">Queue</a>
         <!--<a class="navbar-item" href="/about">About</a>-->

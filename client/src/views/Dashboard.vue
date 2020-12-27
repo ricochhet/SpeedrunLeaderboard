@@ -1,20 +1,78 @@
 <template>
-  <div>
+  <div class="m-6">
     <div class="m-6">
-      <p class="is-size-3"><strong>VERIFICATION DASHBOARD</strong></p>
-      <p>All user submissions will show up here.</p>
+      <p class="is-size-4"><strong>PENDING VERIFICATION</strong></p>
+      <p>Submissions that are pending verification.</p>
     </div>
-    <div class="m-6" v-for="submission in submissions" :key="submission.name" id="submission">
+    <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+      <thead>
+        <tr>
+          <th>Runner</th>
+          <th>Weapon</th>
+          <th>Link</th>
+          <th>Platform</th>
+          <th>Ruleset</th>
+          <th>Quest</th>
+          <th>Options</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="submission in submissions" :key="submission.name" id="submission">
+          <td>{{ submission.name }}</td>
+          <td>{{ submission.run.weapon }}</td>
+          <td><a :href="submission.run.link">{{ submission.run.time }}</a></td>
+          <td>{{ submission.run.platform }}</td>
+          <td>{{ submission.run.ruleset }}</td>
+          <td>{{ submission.run.quest }}</td>
+          <td>
+            <a class="button is-primary m-1" @click="approveSubmission(submission, submission.run.id, submission.run.name)" id="approve-button">Approve</a>
+            <a class="button is-warning m-1" @click="deleteSubmission(submission.run.id, submission.run.name)" id="delete-button">Delete</a>
+            <a class="button is-danger m-1" @click="banUser(submission.run.id, submission.run.name)" id="ban-button">Ban</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="m-6">
+      <p class="is-size-4"><strong>VERIFIED RUNS</strong></p>
+      <p>Already verified submissions.</p>
+    </div>
+    <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+      <thead>
+        <tr>
+          <th>Runner</th>
+          <th>Weapon</th>
+          <th>Link</th>
+          <th>Platform</th>
+          <th>Ruleset</th>
+          <th>Quest</th>
+          <th>Options</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="runner in runners" :key="runner.name" id="runner">
+          <td>{{ runner.name }}</td>
+          <td>{{ runner.run.weapon }}</td>
+          <td><a :href="runner.run.link">{{ runner.run.time }}</a></td>
+          <td>{{ runner.run.platform }}</td>
+          <td>{{ runner.run.ruleset }}</td>
+          <td>{{ runner.run.quest }}</td>
+          <td>
+            <a class="button is-warning m-1" @click="deleteExisting(runner.run.id, runner.run.name)" id="delete-button">Delete</a>
+            <a class="button is-danger m-1" @click="banExisting(runner.run.id, runner.run.name)" id="ban-button">Ban</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!--<div class="m-6" v-for="submission in submissions" :key="submission.name" id="submission">
       <div class="card">
         <header class="card-header">
           <p class="card-header-title">
             {{submission.name}} 
           </p><p class="m-3">{{submission.run.id}}</p>
-          <!--<a href="#" class="card-header-icon" aria-label="more options">
-            <span class="icon">
-              <i class="fas fa-angle-down" aria-hidden="true"></i>
-            </span>
-          </a>-->
+          <a class="button is-danger m-1" @click="banUser(submission.run.id, submission.run.name)" id="ban-button">
+            Ban
+          </a>
         </header>
         <div class="card-content">
           <div class="content">
@@ -25,9 +83,6 @@
             <strong>Ruleset: </strong> {{submission.run.ruleset}} <br>
             <strong>Quest: </strong> {{submission.run.quest}} <br>
             <strong>Link: </strong> <a :href=submission.run.link>{{submission.run.link}}</a>
-            <!--<a href="#">@bulmaio</a>. <a href="#">#css</a> <a href="#">#responsive</a>
-            <br>
-            <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>-->
           </div>
         </div>
         <footer class="card-footer">
@@ -35,7 +90,7 @@
           <a class="card-footer-item" @click="deleteSubmission(submission.run.id, submission.run.name)" id="delete-button">Delete</a>
         </footer>
       </div>
-    </div>
+    </div>-->
   </div>
 </template>
 <script>
@@ -43,14 +98,39 @@ import $ from "jquery";
 import axios from "axios";
 import router from "../router";
 const API_URL = "http://localhost:9000/api/leaderboard/submissions/all";
+const API_URL_RUNS = "http://localhost:9000/api/leaderboard/runners/all"
+const API_URL_BANS = `http://localhost:9000/api/leaderboard/runners/bans/all`;
+const API_URL_LEADERBOARD = `http://localhost:9000/api/leaderboard/leaderboard`;
 
 export default {
   name: "Dashboard",
   data: () => ({
     error: "",
-    submissions: []
+    submissions: [],
+    runners: [],
+    leaderboard: {
+      rise_platforms: [],
+      rise_rulesets: [],
+      rise_weapons: [],
+      //rise_quests: []
+    },
+    bans: [],
   }),
   methods: {
+    toURL: function (str) {
+      return str
+        .toLowerCase()
+        .split(" ")
+        .join("-")
+        .split("'")
+        .join("")
+        .split('"')
+        .join("")
+        .split("(")
+        .join("")
+        .split(")")
+        .join("");
+    },
     getUserData: function() {
       axios.get("http://localhost:9000/api/user").then((response) => {
         console.log(response);
@@ -105,10 +185,133 @@ export default {
         dataType: "json",
         contentType : "application/json"
       });
-    }
+    },
+    banUser: function(id, name) {
+      $(document).on("click", "#ban-button", function() {
+        // Move up DOM tree until first incidence of .item-wrapper and remove
+        $(this).closest("#submission").remove();
+      });
+      $.ajax({
+        type: "POST",
+        url: "http://localhost:9000/api/leaderboard/runners/bans",
+        data: JSON.stringify({ name: name }),
+        success: function(response) {
+          console.log(response);
+        },
+        dataType: "json",
+        contentType : "application/json"
+      });
+      $.ajax({
+        type: "DELETE",
+        url: "http://localhost:9000/api/leaderboard/submissions",
+        data: JSON.stringify({ id: id, name: name }),
+        success: function(response) {
+          console.log(response);
+        },
+        dataType: "json",
+        contentType : "application/json"
+      });
+    },
+    deleteExisting: function(id, name) {
+      $(document).on("click", "#delete-button", function() {
+        // Move up DOM tree until first incidence of .item-wrapper and remove
+        $(this).closest("#runner").remove();
+      });
+      console.log('Delete existing');
+      $.ajax({
+        type: "DELETE",
+        url: "http://localhost:9000/api/leaderboard/runners",
+        data: JSON.stringify({ id: id, name: name }),
+        success: function(response) {
+          console.log(response);
+        },
+        dataType: "json",
+        contentType : "application/json"
+      });
+    },
+    banExisting: function(id, name) {
+      $(document).on("click", "#ban-button", function() {
+        // Move up DOM tree until first incidence of .item-wrapper and remove
+        $(this).closest("#runner").remove();
+      });
+      $.ajax({
+        type: "POST",
+        url: "http://localhost:9000/api/leaderboard/runners/bans",
+        data: JSON.stringify({ name: name }),
+        success: function(response) {
+          console.log(response);
+        },
+        dataType: "json",
+        contentType : "application/json"
+      });
+      $.ajax({
+        type: "DELETE",
+        url: "http://localhost:9000/api/leaderboard/runners",
+        data: JSON.stringify({ id: id, name: name }),
+        success: function(response) {
+          console.log(response);
+        },
+        dataType: "json",
+        contentType : "application/json"
+      });
+    },
   },
   mounted() {
     this.getUserData();
+    fetch(API_URL_LEADERBOARD)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result);
+        const weapons = [];
+        const platforms = [];
+        const rulesets = [];
+
+        weapons.push({
+          url: this.toURL("all"),
+          name: "All"
+        });
+
+        for (const i in result.rise.weapons) {
+          weapons.push({
+            url: this.toURL(result.rise.weapons[i].name),
+            name: result.rise.weapons[i].name
+          });
+        }
+
+        platforms.push({
+          url: this.toURL("all"),
+          name: "All"
+        });
+
+        for (const i in result.rise.platforms) {
+          platforms.push({
+            url: this.toURL(result.rise.platforms[i].name),
+            name: result.rise.platforms[i].name
+          });
+        }
+
+        rulesets.push({
+          url: this.toURL("all"),
+          name: "All"
+        });
+
+        for (const i in result.rise.rulesets) {
+          rulesets.push({
+            url: this.toURL(result.rise.rulesets[i].name),
+            name: result.rise.rulesets[i].name
+          });
+        }
+
+        this.leaderboard.rise_weapons = weapons;
+        this.leaderboard.rise_platforms = platforms;
+        this.leaderboard.rise_rulesets = rulesets;
+        //this.leaderboard.rise_quests = result.rise.quests;
+    });
+    fetch(API_URL_BANS)
+      .then(response => response.json())
+      .then(result => {
+        this.bans = result;
+    });
     fetch(API_URL)
       .then(response => response.json())
       .then(result => {
@@ -123,6 +326,21 @@ export default {
         }
 
         this.submissions = userSubmissions;
+    });
+    fetch(API_URL_RUNS)
+      .then(response => response.json())
+      .then(result => {
+        // Get each individual submission per user
+        const userRuns = [];
+        for (const i in result) {
+          const name = result[i]["name"];
+          const runs = result[i]["runs"];
+          for (const k in runs) {
+            userRuns.push({name: name, run: runs[k]});
+          }
+        }
+
+        this.runners = userRuns;
     });
   }
 };

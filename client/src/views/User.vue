@@ -21,7 +21,7 @@
         <tbody>
           <tr v-for="run in user.runs" :key="run.quest">
             <td>{{ user.name }}</td>
-            <td>{{ run.time }}</td>
+            <td><a :href="run.link">{{ run.time }}</a></td>
             <td>{{ run.weapon }}</td>
             <td>{{ run.platform }}</td>
             <td>{{ run.quest }}</td>

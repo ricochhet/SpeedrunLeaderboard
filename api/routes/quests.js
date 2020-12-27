@@ -76,29 +76,37 @@ router.get(
 			const runs = [];
 
 			for (const i in rawQuestRunnerData) {
-				const questName = parser.toURL(rawQuestRunnerData[i]["quest"]);
+				try {
+					const questName = parser.toURL(rawQuestRunnerData[i]["quest"]);
 
-				// Parse each part of the timestamp so we can later sort by fastest / slowest
-				const questMinutes = parser.timeFetch(
-					rawQuestRunnerData[i]["time"],
-					"minutes"
-				);
-				const questSeconds = parser.timeFetch(
-					rawQuestRunnerData[i]["time"],
-					"seconds"
-				);
-				const questMilliseconds = parser.timeFetch(
-					rawQuestRunnerData[i]["time"],
-					"milliseconds"
-				);
-
-				// A bit hacky but it's not a big deal
-				rawQuestRunnerData[i]["quest_minutes"] = questMinutes;
-				rawQuestRunnerData[i]["quest_seconds"] = questSeconds;
-				rawQuestRunnerData[i]["quest_milliseconds"] = questMilliseconds;
-
-				if (params.name == questName) {
-					runs.push(rawQuestRunnerData[i]);
+					// Parse each part of the timestamp so we can later sort by fastest / slowest
+					const questMinutes = parser.timeFetch(
+						rawQuestRunnerData[i]["time"],
+						"minutes"
+					);
+					const questSeconds = parser.timeFetch(
+						rawQuestRunnerData[i]["time"],
+						"seconds"
+					);
+					const questMilliseconds = parser.timeFetch(
+						rawQuestRunnerData[i]["time"],
+						"milliseconds"
+					);
+	
+					// A bit hacky but it's not a big deal
+					rawQuestRunnerData[i]["quest_minutes"] = questMinutes;
+					rawQuestRunnerData[i]["quest_seconds"] = questSeconds;
+					rawQuestRunnerData[i]["quest_milliseconds"] = questMilliseconds;
+	
+					if (params.name == questName) {
+						runs.push(rawQuestRunnerData[i]);
+					}
+				} catch (e) {
+					res.json({ message: "Could not parse database" });
+					winston.log({
+						level: "error",
+						message: e,
+					});
 				}
 			}
 
@@ -207,7 +215,7 @@ router.get(
 );
 
 router.get(
-	"/rise/rankings/:name/:weapon/:ruleset",
+	"/rise/quests/rankings/:name/:weapon/:ruleset",
 	function (req, res) {
 		try {
 			const params = req.params;
