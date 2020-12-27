@@ -5,7 +5,14 @@
         MH: Rise Leaderboard
       </a>
 
-      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample" onclick="document.querySelector('.navbar-menu').classList.toggle('is-active');">
+      <a
+        role="button"
+        class="navbar-burger"
+        aria-label="menu"
+        aria-expanded="false"
+        data-target="navbarBasicExample"
+        onclick="document.querySelector('.navbar-menu').classList.toggle('is-active');"
+      >
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
         <span aria-hidden="true"></span>
@@ -14,7 +21,8 @@
 
     <div id="navbarBasicExample" class="navbar-menu">
       <div class="navbar-start">
-        <a class="navbar-item" href="/">Home</a>
+        <!--<a class="navbar-item" href="/">Home</a>-->
+        <a class="navbar-item" href="/monsters">Monsters</a>
         <a class="navbar-item" href="/quests">Quests</a>
         <a class="navbar-item" href="/runners">Runners</a>
         <a class="navbar-item" href="/rules">Rules</a>

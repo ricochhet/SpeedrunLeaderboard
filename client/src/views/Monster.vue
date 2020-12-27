@@ -7,7 +7,7 @@
       <!--<div v-else-if="user.status != 404">-->
       <!--<h1><strong>{{ $route.params.id }}</strong></h1>-->
       <h1 class="is-size-4">
-        <strong>{{ quest }}</strong>
+        <strong>{{ monster }}</strong>
       </h1>
       <div class="m-1">
         <nav
@@ -39,7 +39,7 @@
                 <div class="navbar-dropdown">
                   <a
                     :href="
-                      `/quests/${this.$route.params.name}/${weapon.url}/${this.$route.params.ruleset}/${this.$route.params.platform}`
+                      `/monsters/${this.$route.params.name}/${weapon.url}/${this.$route.params.ruleset}/${this.$route.params.platform}`
                     "
                     class="dropdown-item"
                     v-for="weapon in leaderboard.rise_weapons"
@@ -57,7 +57,7 @@
                   <a
                     class="navbar-item"
                     :href="
-                      `/quests/${this.$route.params.name}/${this.$route.params.weapon}/${ruleset.url}/${this.$route.params.platform}`
+                      `/monsters/${this.$route.params.name}/${this.$route.params.weapon}/${ruleset.url}/${this.$route.params.platform}`
                     "
                     v-for="ruleset in leaderboard.rise_rulesets"
                     :key="ruleset.url"
@@ -74,7 +74,7 @@
                   <a
                     class="navbar-item"
                     :href="
-                      `/quests/${this.$route.params.name}/${this.$route.params.weapon}/${this.$route.params.ruleset}/${platform.url}`
+                      `/monsters/${this.$route.params.name}/${this.$route.params.weapon}/${this.$route.params.ruleset}/${platform.url}`
                     "
                     v-for="platform in leaderboard.rise_platforms"
                     :key="platform.url"
@@ -122,7 +122,7 @@ import arrayUtils from "../utils/arrayUtils";
 import getters from "../utils/getters";
 
 export default {
-  name: "Quest",
+  name: "Monster",
   data: () => ({
     error: "",
     runs: [],
@@ -132,7 +132,7 @@ export default {
       rise_weapons: []
       //rise_quests: []
     },
-    quest: ""
+    monster: ""
   }),
   mounted() {
     axios
@@ -144,7 +144,7 @@ export default {
         const token = res.data.accessToken;
 
         // API_URL is placed here because it needs to reference the params
-        const API_URL = `http://localhost:9000/api/rise/quests/${this.$route.params.name}/${this.$route.params.weapon}/${this.$route.params.ruleset}/${this.$route.params.platform}`;
+        const API_URL = `http://localhost:9000/api/rise/monsters/${this.$route.params.name}/${this.$route.params.weapon}/${this.$route.params.ruleset}/${this.$route.params.platform}`;
 
         fetch(API_URL, {
           headers: {
@@ -156,7 +156,7 @@ export default {
             this.runs = result;
           });
 
-        fetch(getters.URL.API_RISE_QUESTS, {
+        fetch(getters.URL.API_RISE_MONSTERS, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -165,11 +165,15 @@ export default {
           .then(result => {
             const map = new Map();
 
+            console.log(result);
             for (const i in result) {
-              map.set(arrayUtils.toURL(result[i]["name"]), result[i]["name"]);
+              map.set(
+                arrayUtils.toURL(result[i]["primary_monster"]),
+                result[i]["primary_monster"]
+              );
             }
 
-            this.quest = map.get(this.$route.params.name);
+            this.monster = map.get(this.$route.params.name);
           });
 
         fetch(getters.URL.API_LEADERBOARD_DATA, {

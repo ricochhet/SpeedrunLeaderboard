@@ -1,17 +1,8 @@
 const Database = require("../../database/database");
-const User = require("../models/user");
-const parser = require("../../database/utils/parser");
-const arrayUtils = require("../../utils/arrayUtils");
 const router = require("express").Router();
 const winston = require("../../utils/winstonLogger");
 
 const opts = {
-	encoding: "utf-8",
-	delimiter: ".",
-	spacing: "\t",
-};
-
-const dbOptions = {
 	encoding: "utf-8",
 	delimiter: ".",
 	spacing: "\t",

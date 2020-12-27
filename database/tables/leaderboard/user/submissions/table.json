@@ -14,5 +14,9 @@
 	"deleteme": {
 		"name": "DeleteMe",
 		"runs": []
+	},
+	"exampleuser": {
+		"name": "ExampleUser",
+		"runs": []
 	}
 }

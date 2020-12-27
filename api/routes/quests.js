@@ -1,17 +1,10 @@
 const Database = require("../../database/database");
-const User = require("../models/user");
 const parser = require("../../database/utils/parser");
 const arrayUtils = require("../../utils/arrayUtils");
 const router = require("express").Router();
 const winston = require("../../utils/winstonLogger");
 
 const opts = {
-	encoding: "utf-8",
-	delimiter: ".",
-	spacing: "\t",
-};
-
-const dbOptions = {
 	encoding: "utf-8",
 	delimiter: ".",
 	spacing: "\t",
@@ -25,18 +18,12 @@ router.get("/rise/quests", function (req, res) {
 		);
 		const quests = database.json["rise"]["quests"];
 		const questData = [];
-		for (const i in quests) {
-			quests[i]["id"] = quests[i].name
-				.toLowerCase()
-				.split(" ")
-				.join("-")
-				.split("'")
-				.join("")
-				.split('"')
-				.join("");
 
+		for (const i in quests) {
+			quests[i]["id"] = parser.toURL(quests[i].name);
 			questData.push(quests);
 		}
+		
 		res.json(quests);
 	} catch (e) {
 		res.json({ message: "Could not parse database" });
@@ -339,36 +326,5 @@ router.get(
 		}
 	}
 );
-
-/*
-router.get("/rise/quests", function (req, res) {
-	try {
-		const database = new Database(
-			"./database/tables/leaderboard/data.json",
-			opts
-		);
-		const quests = database.json["rise"]["quests"];
-		const questData = [];
-		for (const i in quests) {
-			quests[i]["id"] = quests[i].name
-				.toLowerCase()
-				.split(" ")
-				.join("-")
-				.split("'")
-				.join("")
-				.split('"')
-				.join("");
-
-			questData.push(quests);
-		}
-		res.json(quests);
-	} catch (e) {
-		res.json({ message: "Could not parse database" });
-		winston.log({
-			level: "error",
-			message: e,
-		});
-	}
-});*/
 
 module.exports = router;

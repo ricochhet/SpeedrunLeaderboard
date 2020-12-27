@@ -13,5 +13,35 @@
 				"ruleset": "TA Wiki"
 			}
 		]
+	},
+	"exampleuser": {
+		"name": "ExampleUser",
+		"runs": [
+			{
+				"id": "a4a992913c0f70d7cf87edb3e8131de2",
+				"name": "ExampleUser",
+				"quest": "The Greatest Jagras",
+				"time": "49'59\"99",
+				"weapon": "Hunting Horn",
+				"link": "https://youtube.com",
+				"platform": "Switch (DEMO)",
+				"ruleset": "TA Wiki"
+			}
+		]
+	},
+	"anotherexampleuser": {
+		"name": "AnotherExampleUser",
+		"runs": [
+			{
+				"id": "a4a992913c0f70d7cf87edb39a131de2",
+				"name": "AnotherExampleUser",
+				"quest": "Muscle Monkey Madness",
+				"time": "49'59\"99",
+				"weapon": "Hunting Horn",
+				"link": "https://youtube.com",
+				"platform": "Switch (DEMO)",
+				"ruleset": "TA Wiki"
+			}
+		]
 	}
 }

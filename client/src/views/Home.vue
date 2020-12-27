@@ -5,8 +5,8 @@
 </template>
 
 <script>
-const API_URL = "http://localhost:9000/api/leaderboard/runners/all";
 import axios from "axios";
+import getters from "../utils/getters";
 
 export default {
   name: "Home",
@@ -15,20 +15,24 @@ export default {
     runners: []
   }),
   mounted() {
-    axios.post("http://localhost:9000/login", { username: "admin", password: "admin" }).then((res) => {
-      const token = res.data.accessToken;
-
-      fetch(API_URL, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+    axios
+      .post(getters.URL.API_AUTH_LOGIN, {
+        username: getters.ENV.API_USERNAME,
+        password: getters.ENV.API_PASSWORD
       })
-        .then(response => response.json())
-        .then(result => {
-          this.runners = result;
+      .then(res => {
+        const token = res.data.accessToken;
+
+        fetch(getters.URL.API_LEADERBOARD_RUNNERS_ALL, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+          .then(response => response.json())
+          .then(result => {
+            this.runners = result;
+          });
       });
-    });
   }
 };
 </script>
-  

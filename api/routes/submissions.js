@@ -1,7 +1,6 @@
 const Database = require("../../database/database");
 const User = require("../models/user");
 const parser = require("../../database/utils/parser");
-const arrayUtils = require("../../utils/arrayUtils");
 const router = require("express").Router();
 const winston = require("../../utils/winstonLogger");
 

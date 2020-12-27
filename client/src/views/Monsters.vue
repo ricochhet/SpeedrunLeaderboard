@@ -1,14 +1,18 @@
 <template>
   <div class="content">
     <ul class="is-lower-alpha">
-      <h3>1★ Quests:</h3>
-      <li v-for="quest in quests.rank_one" :key="quest.name">
-        <a :href="'/quests/' + quest.id + '/all/all/all'">{{ quest.name }}</a>
+      <h3>1★ Monsters:</h3>
+      <li v-for="monster in monsters.rank_one" :key="monster.name">
+        <a :href="'/monsters/' + monster.id + '/all/all/all'">{{
+          monster.primary_monster
+        }}</a>
       </li>
 
-      <h3>2★ Quests:</h3>
-      <li v-for="quest in quests.rank_two" :key="quest.name">
-        <a :href="'/quests/' + quest.id + '/all/all/all'">{{ quest.name }}</a>
+      <h3>2★ Monsters:</h3>
+      <li v-for="monster in monsters.rank_two" :key="monster.name">
+        <a :href="'/monsters/' + monster.id + '/all/all/all'">{{
+          monster.primary_monster
+        }}</a>
       </li>
     </ul>
   </div>
@@ -18,10 +22,10 @@ import axios from "axios";
 import getters from "../utils/getters";
 
 export default {
-  name: "Quests",
+  name: "Monsters",
   data: () => ({
     error: "",
-    quests: []
+    monsters: []
   }),
   mounted() {
     axios
@@ -32,7 +36,7 @@ export default {
       .then(res => {
         const token = res.data.accessToken;
 
-        fetch(getters.URL.API_RISE_QUESTS, {
+        fetch(getters.URL.API_RISE_MONSTERS, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -49,7 +53,7 @@ export default {
               if (result[i].rank == 2) object.rank_two.push(result[i]);
             }
 
-            this.quests = object;
+            this.monsters = object;
           });
       });
   }
