@@ -6,6 +6,10 @@
       before submitting.
     </p>
     <a href="/rules">Rules</a>
+    <div class="m-3"></div>
+    <p>Please check the queue after submitted to make sure everything is correct, or resubmit.</p>
+    <p>We will not notify you about incorrect information.</p>
+    <a href="/queue">Queue</a>
   </div>
   <form id="submissionForm">
     <div class="m-6" style="width:25%;">
