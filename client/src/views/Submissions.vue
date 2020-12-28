@@ -229,7 +229,7 @@ export default {
             };
 
             axios
-              .post("http://localhost:9000/api/leaderboard/submissions", data, {
+              .post(getters.URL.API_LEADERBOARD_SUBMISSIONS, data, {
                 headers: {
                   Authorization: `Bearer ${token}`
                 }

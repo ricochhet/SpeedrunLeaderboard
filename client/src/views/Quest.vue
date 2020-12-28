@@ -144,7 +144,7 @@ export default {
         const token = res.data.accessToken;
 
         // API_URL is placed here because it needs to reference the params
-        const API_URL = `http://localhost:9000/api/rise/quests/${this.$route.params.name}/${this.$route.params.weapon}/${this.$route.params.ruleset}/${this.$route.params.platform}`;
+        const API_URL = `${getters.URL.API_RISE_QUESTS}/${this.$route.params.name}/${this.$route.params.weapon}/${this.$route.params.ruleset}/${this.$route.params.platform}`;
 
         fetch(API_URL, {
           headers: {
