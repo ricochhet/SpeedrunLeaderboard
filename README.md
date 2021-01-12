@@ -1,4 +1,5 @@
-# SpeedrunLeaderboard
+***This project is no longer actively being developed.***
+## SpeedrunLeaderboard
 Speedrunning Leaderboard Template
 
 ## Installation & Deployment
