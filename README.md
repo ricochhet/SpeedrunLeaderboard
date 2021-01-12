@@ -1,6 +1,7 @@
 ***This project is no longer actively being developed.***
+
 ## SpeedrunLeaderboard
-Speedrunning Leaderboard Template
+A speedrunning leaderboard for the game Monster Hunter Rise. 
 
 ## Installation & Deployment
 
